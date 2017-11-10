@@ -103,7 +103,7 @@ def attenRCnn(train_lexical_data,train_sentence_data,train_label,
     sgd = SGD(lr=0.01, decay=1e-5, momentum=0.9, nesterov=True)
     final_model.compile(loss='categorical_crossentropy', optimizer=sgd,metrics=['accuracy'])
 
-    epoch = 50
+    epoch = 14
     for i in range(epoch):
         print i,'/',epoch
         final_model.fit([train_lexical_data, train_sentence_data],train_label, batch_size=64,
@@ -118,7 +118,15 @@ def attenRCnn(train_lexical_data,train_sentence_data,train_label,
         test_classes = final_model.predict_classes([test_lexical_data,test_sentence_data],batch_size=64)
         putOut(test_classes,test_label)
 
-    final_model.save('../final_model.h5')
+    final_model.save('../model_file/final_model.h5')
+
+    json_string = final_model.to_json()  #等价于 json_string = model.get_config()
+    open('../model_file/my_model_architecture.json','w').write(json_string)
+    final_model.save_weights('../model_file/my_model_weights.h5')
+    
+	#加载模型数据和weights  
+	# model = model_from_json(open('my_model_architecture.json').read())    
+	# model.load_weights('my_model_weights.h5')  
 
 def putOut(test_classes,test_label):
     list_actual = [0] * label_count  #实际属于每个关系类别的个数
